@@ -10,17 +10,23 @@ namespace Code.Implementation
 {
     public class Channel : IChannel
     {
-        public BitArray Result { get; private set; }
+        private Random _rand = new Random();
 
-        public void Send(BitArray data, int failureRate)
+        public BitArray Send(BitArray data, int failureRate)
         {
-            Random rand = new Random();
+            if (failureRate > 100 || failureRate < 0)
+                throw new ArgumentException($"{nameof(failureRate)} must be a number between 0 and 100");
 
             for (int i = 0; i < data.Count; i++)
-                if (rand.Next(1, 101) <= failureRate)
+                if (_rand.Next(1, 101) <= failureRate)
                     data[i] = !data[i];
 
-            Result = data;
+            return data;
+        }
+
+        public byte[] Send(byte[] data, int failureRate)
+        {
+            return Send(new BitArray(data), failureRate).ToBytes();
         }
     }
 }
