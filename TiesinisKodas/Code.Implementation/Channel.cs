@@ -12,19 +12,19 @@ namespace Code.Implementation
     {
         private Random _rand = new Random();
 
-        public BitArray Send(BitArray data, int failureRate)
+        public BitArray Send(BitArray data, double failureRate)
         {
-            if (failureRate > 100 || failureRate < 0)
+            if (failureRate > 1 || failureRate < 0)
                 throw new ArgumentException($"{nameof(failureRate)} must be a number between 0 and 100");
 
             for (int i = 0; i < data.Count; i++)
-                if (_rand.Next(1, 101) <= failureRate)
+                if (_rand.NextDouble() < failureRate)
                     data[i] = !data[i];
 
             return data;
         }
 
-        public byte[] Send(byte[] data, int failureRate)
+        public byte[] Send(byte[] data, double failureRate)
         {
             return Send(new BitArray(data), failureRate).ToBytes();
         }

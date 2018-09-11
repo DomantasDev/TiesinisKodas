@@ -9,7 +9,7 @@ namespace Code.Contracts
 {
     public interface IChannel
     {
-        BitArray Send(BitArray data, int failureRate);
-        byte[] Send(byte[] data, int failureRate);
+        BitArray Send(BitArray data, double failureRate);
+        byte[] Send(byte[] data, double failureRate);
     }
 }

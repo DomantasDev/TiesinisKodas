@@ -22,17 +22,18 @@ namespace Code.Contracts
             PostfixLength = codeLength - dimension;
             Dimension = dimension;
             CodeLength = codeLength;
-
-            //Matrix = new BitArray[dimension];
-            //for(int i = 0; i < dimension; i++)
-            //    Matrix[i] = new BitArray(codeLength);
-
-            //for (int i = 0; i < dimension; i++)
-            //    for (int j = 0; j < codeLength; j++)
-            //        Matrix[i][j] = RandomBool();
         }
 
         public void GenerateStandardFormMatrix()
+        {
+            int matrixSize = PostfixLength * Dimension;
+            var bits = new BitArray(matrixSize);
+            for (int i = 0; i < matrixSize; i++)
+                bits[i] = RandomBool();
+            GenerateStandardFormMatrix(bits);
+        }
+
+        public void GenerateStandardFormMatrix(BitArray bits)
         {
             Matrix = new BitArray[Dimension];
             for (int i = 0; i < Dimension; i++)
@@ -40,10 +41,7 @@ namespace Code.Contracts
 
             for (int i = 0; i < Dimension; i++)
                 for (int j = 0; j < PostfixLength; j++)
-                    Matrix[i][j] = RandomBool();
-            //Matrix[0] = new BitArray(new[] {true, false });
-            //Matrix[1] = new BitArray(new[] {true, true });
-            //Matrix[2] = new BitArray(new[] {false, true });
+                    Matrix[i][j] = bits[i * PostfixLength + j];
         }
 
         private Random _rand = new Random();

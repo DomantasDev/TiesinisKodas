@@ -13,7 +13,18 @@ namespace ConsoleApp
     {
         static void Main(string[] args)
         {
-            var matrix = new GeneratingMatrix(5,3);
+            int codeLength;
+            string input;
+
+            Console.Write("iveskite kodo ilgi: ");
+            input = Console.ReadLine();
+            while (int.TryParse(Console.ReadLine(), out codeLength))
+            {
+                Console.Write("ivestis neteisinga, veskite dar karta: ");
+            }
+
+            codeLength = 1;
+            var matrix = new GeneratingMatrix(10,4);
             matrix.GenerateStandardFormMatrix();
             PrintMatrix(matrix.Matrix);
 
@@ -23,7 +34,7 @@ namespace ConsoleApp
             //Console.Write("Vector: ");
             //PrintBitArray(vector);
 
-            string x = "~";
+            string x = "Please Work ~";
             Console.Write("string:  ");
             var data = Encoding.ASCII.GetBytes(x);
             PrintBits(new BitArray(data));
@@ -33,7 +44,7 @@ namespace ConsoleApp
             PrintBits(encoded);
 
             var channel = new Channel();
-            var fromChanel = channel.Send(encoded, 30);
+            var fromChanel = channel.Send(encoded, 0.1);
             Console.Write("from channel: \t");
             PrintBits(fromChanel);
 

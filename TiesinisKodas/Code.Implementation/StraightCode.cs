@@ -117,7 +117,10 @@ namespace Code.Implementation
                     return RemovePostfix(newVector);
 
                 if (newWeight < currentWeight)
+                {
                     currentWeight = newWeight;
+                    vector = newVector;
+                }
             }
             return null;
         }
