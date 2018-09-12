@@ -17,5 +17,18 @@ namespace Code.Contracts
             bits.CopyTo(result, 0);
             return result;
         }
+
+        public static string ToText(this BitArray bits)
+        {
+            string result = string.Empty;
+            foreach(bool bit in bits)
+            {
+                if (bit)
+                    result += "1";
+                else
+                    result += "0";
+            }
+            return result;  
+        }
     }
 }
