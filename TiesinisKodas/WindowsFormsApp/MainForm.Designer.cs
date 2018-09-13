@@ -65,6 +65,8 @@
             this.label5 = new System.Windows.Forms.Label();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this._setMatrixButton = new System.Windows.Forms.Button();
+            this.label9 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this._matrixGridView)).BeginInit();
             this._tabControl.SuspendLayout();
             this._vectorTabPage.SuspendLayout();
@@ -340,6 +342,8 @@
             // 
             // _imageTabPage
             // 
+            this._imageTabPage.Controls.Add(this.label10);
+            this._imageTabPage.Controls.Add(this.label9);
             this._imageTabPage.Controls.Add(this._decodeImageButton);
             this._imageTabPage.Controls.Add(this._notCodedImage);
             this._imageTabPage.Controls.Add(this._codedImage);
@@ -428,6 +432,24 @@
             this._setMatrixButton.Visible = false;
             this._setMatrixButton.Click += new System.EventHandler(this._setMatrixButton_Click);
             // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(487, 429);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(91, 13);
+            this.label9.TabIndex = 6;
+            this.label9.Text = "Without encoding";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(845, 425);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(76, 13);
+            this.label10.TabIndex = 7;
+            this.label10.Text = "With encoding";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -453,6 +475,7 @@
             this._stringTabPage.ResumeLayout(false);
             this._stringTabPage.PerformLayout();
             this._imageTabPage.ResumeLayout(false);
+            this._imageTabPage.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this._notCodedImage)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this._codedImage)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this._inputImage)).EndInit();
@@ -500,6 +523,8 @@
         private System.Windows.Forms.Button _setMatrixButton;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.TextBox _notCodedStringTextBox;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Label label9;
     }
 }
 

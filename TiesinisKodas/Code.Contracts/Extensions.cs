@@ -23,12 +23,17 @@ namespace Code.Contracts
             string result = string.Empty;
             foreach(bool bit in bits)
             {
-                if (bit)
-                    result += "1";
-                else
-                    result += "0";
+                result += bit.ToText();
             }
             return result;  
+        }
+
+        public static string ToText(this bool bit)
+        {
+            if (bit)
+                return "1";
+            else
+                return "0";
         }
     }
 }
