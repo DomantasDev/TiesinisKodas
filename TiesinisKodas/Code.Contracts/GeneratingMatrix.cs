@@ -10,20 +10,22 @@ namespace Code.Contracts
     public class GeneratingMatrix
     {
         public BitArray[] Matrix { get; private set; }
-        public int PostfixLength { get; private set; }
+        public int PostfixLength { get; private set; } // kodo ilgis - dimensija
         public int Dimension { get; private set; }
         public int CodeLength { get; private set; }
 
         public GeneratingMatrix(int codeLength, int dimension)
         {
-            if (codeLength < dimension)
+            if (codeLength <= dimension)
                 throw new ArgumentException($"{nameof(codeLength)} cant be greater than {nameof(dimension)}");
 
             PostfixLength = codeLength - dimension;
             Dimension = dimension;
             CodeLength = codeLength;
         }
-
+        /**
+        * sukuria generuojančią matricą su atsitiktinėmis reikšmėmis
+        **/
         public void GenerateStandardFormMatrix()
         {
             int matrixSize = PostfixLength * Dimension;
@@ -32,9 +34,14 @@ namespace Code.Contracts
                 bits[i] = RandomBool();
             GenerateStandardFormMatrix(bits);
         }
-
+        /**
+        * sukuria generuojančią matricą iš parametrų perduoto bitų masyvo.
+        * masyve pateikiamos tik nevienetinės matricos dalies reikšmės eilutėmis
+        **/
         public void GenerateStandardFormMatrix(BitArray bits)
         {
+            if (bits.Count != Dimension * PostfixLength)
+                throw new ArgumentException($"lenth of {nameof(bits)} must be {Dimension * PostfixLength}");
             Matrix = new BitArray[Dimension];
             for (int i = 0; i < Dimension; i++)
                 Matrix[i] = new BitArray(PostfixLength);

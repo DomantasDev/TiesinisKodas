@@ -9,6 +9,10 @@ namespace Code.Contracts
 {
     public static class Extensions
     {
+        /**
+        * bitų masyva paverčia baitų masyvu ir jį grąžina.
+        * jei bitų skaičius nėra 8 kartotinis, paskutiniai bitai ignoruojami
+        **/
         public static byte[] ToBytes(this BitArray bits)
         {
             int nrOfBytes = bits.Count / 8;
@@ -17,7 +21,9 @@ namespace Code.Contracts
             bits.CopyTo(result, 0);
             return result;
         }
-
+        /**
+        * grąžina bitų masyvo reprezentacija tekstine eilute, pvz 101001
+        **/
         public static string ToText(this BitArray bits)
         {
             string result = string.Empty;
@@ -27,13 +33,15 @@ namespace Code.Contracts
             }
             return result;  
         }
-
-        public static string ToText(this bool bit)
+        /**
+        * grąžina vieno bito reprezentaciją vienu simboliu, 1 arba 0
+        **/
+        public static char ToText(this bool bit)
         {
             if (bit)
-                return "1";
+                return '1';
             else
-                return "0";
+                return '0';
         }
     }
 }

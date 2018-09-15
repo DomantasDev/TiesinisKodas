@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace Code.Implementation
 {
+    /**
+    * Tiesinio kodo realizacija
+    **/
     public class StraightCode : ICode
     {
         private GeneratingMatrix _matrix;
@@ -19,6 +22,9 @@ namespace Code.Implementation
             _matrix = matrix;
         }
 
+        /**
+         * Užkoduoją parametru perduotą baitų masyvą ir jį grąžiną
+         **/
         public BitArray EncodeData(byte[] data)
         {
             var bits = new BitArray(data);
@@ -30,13 +36,24 @@ namespace Code.Implementation
 
             for (int i = 0; i < nrOfFullVectors; i++)
             {
+                /**
+                 * suskaido baitų masyvą į kodo dimensijos ilgio vektorius
+                 **/
                 var vector = new BitArray(_matrix.Dimension);
                 for (int j = 0; j < _matrix.Dimension; j++)
                     vector[j] = bits[i * _matrix.Dimension + j];
+                /**
+                 * kiekvieną vektorių užkoduoją ir pridedą jį prie galutinio bitų masyvo
+                 **/
                 var encodedVector = EncodeVector(vector);
                 for (int j = 0; j < _matrix.CodeLength; j++)
                     result[i * _matrix.CodeLength + j] = encodedVector[j];
-            }            
+            }
+            /**
+             * jeigu pramametru perduoto baitų masyvo ilgis bitais nėra kodo dimensijos ilgio kartotinis,
+             * prie gale likusių bitų yra pridedama tiek 0, kad susidarytų kodo dimensijos ilgio vektorius,
+             * šis vektorius užkoduojamas ir pridedamas prie galutinio bitų masyvo
+             **/
             if (remainingBits != 0)
             {
                 var vector = new BitArray(_matrix.Dimension, false);
@@ -49,18 +66,24 @@ namespace Code.Implementation
             return result;
         }
 
+        /**
+         * Užkoduoją parametru perduotą bitų masyvą ir jį grąžina. 
+         * Parametru perduodamas bitų masyvas turi būti tokio pat ilgio kaip kodo dimensijos ilgis
+         **/
         public BitArray EncodeVector(BitArray vector)
         {
             if (vector == null)
                 throw new ArgumentNullException($"{nameof(vector)} can't be null");
-            if (vector.Count % _matrix.Dimension != 0)
-                return null;
+            if (vector.Count != _matrix.Dimension)
+                throw new ArgumentException($"{nameof(vector)} length must be {_matrix.Dimension}, but was {vector.Count}");
 
             BitArray result = new BitArray(_matrix.CodeLength, false);
             for (int i = 0; i < vector.Count; i++)
                 result[i] = vector[i];
-
-            for (int i = 0; i < _matrix.PostfixLength; i++)
+            /**
+             * Parametru perduotas bitų masyvas dauginamas su generuojančia matrica
+             **/
+            for (int i = 0; i < _matrix.PostfixLength; i++) 
             {
                 bool bit = false;
 
@@ -72,31 +95,17 @@ namespace Code.Implementation
 
             return result;
         }
-
-        public byte[] DecodeData(BitArray data)
-        {
-            var result = new BitArray(data.Length / _matrix.CodeLength * _matrix.Dimension);
-
-            for (int i = 0; i < data.Length / _matrix.CodeLength; i++)
-            {
-                var encodedVector = new BitArray(_matrix.CodeLength);
-                for (int j = 0; j < _matrix.CodeLength; j++)
-                    encodedVector[j] = data[i * _matrix.CodeLength + j];
-                var decodedVector = DecodeVector(encodedVector);
-                for (int j = 0; j < _matrix.Dimension; j++)
-                {
-                    result[i * _matrix.Dimension + j] = decodedVector[j];
-                }
-
-            }
-            return result.ToBytes();
-        }     
-
+        /**
+         * Grandinionio(step-by-step) dekodavimo algoritmo realizaciją
+         * Parametrų perduoto bitų masyvo ilgis turi būti lygus kodo ilgiui
+         **/
         public BitArray DecodeVector(BitArray vector)
         {
-            if (_controlMatrix == null)
+            if (vector.Count != _matrix.CodeLength)
+                throw new ArgumentException($"{nameof(vector)} length must be {_matrix.CodeLength}, but was {vector.Count}");
+            if (_controlMatrix == null) // jei kontrolinė matrica dar nesukurta, ją sukuriam
                 SetControlMatrix();
-            if (!_cosetLeaders.Any())
+            if (!_cosetLeaders.Any())   // jei dar nėra sudarytą lentelė su klasiu sindromais ir svoriais, ją sudarome
                 for (int i = 1; i <= _matrix.CodeLength - 1; i++)
                     SetCosetLeaders(i, new BitArray(_matrix.CodeLength, false));
 
@@ -105,18 +114,21 @@ namespace Code.Implementation
             if (currentWeight == 0)
                 return RemovePostfix(vector);
 
+            /**
+             * 
+             **/
             int newWeight;
-            for(int i = 0; i < _matrix.CodeLength; i++)
+            for (int i = 0; i < _matrix.CodeLength; i++) // bitai iš kairės į dešinę po vieną invertuojami
             {
                 var newVector = new BitArray(vector);
-                newVector[i] = !newVector[i];
-                syndrome = GetSyndrome(newVector);
-                newWeight = _cosetLeaders.First(l => CompareBits(l.Syndrome, syndrome)).Weight;
+                newVector[i] = !newVector[i];       //vieno bito invertavimas
+                syndrome = GetSyndrome(newVector);  //randam naują sindromą
+                newWeight = _cosetLeaders.First(l => CompareBits(l.Syndrome, syndrome)).Weight;//randam naują sindromą atitinkantį svorį
 
                 if (newWeight == 0)
                     return RemovePostfix(newVector);
 
-                if (newWeight < currentWeight)
+                if (newWeight < currentWeight) // jei naujas svoris mažesnis už buvusį, toliau tęsime su newVector
                 {
                     currentWeight = newWeight;
                     vector = newVector;
@@ -124,7 +136,32 @@ namespace Code.Implementation
             }
             return null;
         }
+        /**
+         * Grandinionio(step-by-step) dekodavimo algoritmu dekoduojami duomenys.
+         * duomenys grąžinami baitų masyvo pavidalu. 
+         * jei dekoduoto bitų masyvo ilgis nėra 8 kartotinis, paskutiniai bitai yra ignoruojami
+         **/
+        public byte[] DecodeData(BitArray data)
+        {
+            int nrOfWords = data.Length / _matrix.CodeLength;
+            var result = new BitArray(nrOfWords * _matrix.Dimension);
 
+            for (int i = 0; i < nrOfWords; i++)
+            {
+                var encodedVector = new BitArray(_matrix.CodeLength); // parametru perduoti duomenys suskaidomi į kodo ilgio vektorius
+                for (int j = 0; j < _matrix.CodeLength; j++)
+                    encodedVector[j] = data[i * _matrix.CodeLength + j];
+                var decodedVector = DecodeVector(encodedVector);    //kiekvienas vektorius dekoduojamas is pridedamas prie dekoduotu bitų masyvo
+                for (int j = 0; j < _matrix.Dimension; j++)
+                {
+                    result[i * _matrix.Dimension + j] = decodedVector[j];
+                }
+            }
+            return result.ToBytes();
+        }     
+        /**
+         * nuo parametru perduoto bitu masyvo galo "nukerpamas" bitų skaičius lygus skirtumui tarp kodo ilgio ir dimensijos
+         **/
         private BitArray RemovePostfix(BitArray vector)
         {
             BitArray result = new BitArray(_matrix.Dimension);
@@ -132,41 +169,49 @@ namespace Code.Implementation
                 result[i] = vector[i];
             return result;
         }
-
+        /**
+         * sukuriama kontroline matrica
+         **/
         private void SetControlMatrix()
         {
             _controlMatrix = new BitArray[_matrix.PostfixLength];
             for (int i = 0; i < _matrix.PostfixLength; i++)
                 _controlMatrix[i] = new BitArray(_matrix.Dimension);
 
-            for (int i = 0; i < _matrix.Dimension; i++)
+            for (int i = 0; i < _matrix.Dimension; i++) // generuojančios matricos ne vienetinė dalis transponuojama
                 for (int j = 0; j < _matrix.PostfixLength; j++)
                     _controlMatrix[j][i] = _matrix.Matrix[i][j];
-
-            //return result;
         }
-
-        
-        private void SetCosetLeaders(int rekursions, BitArray vector)
+        /**
+        * rekursijos pagrindu įgyvendintas standartinės lentelės sudarymas.
+        * recursions - kelių bitų visos variacijos bus išbandomos.
+        * vector - bitų vektorius, kuriame varijuosime bitų pozicijas
+        **/
+        private void SetCosetLeaders(int recursions, BitArray vector)
         {
-            int limit = (int)Math.Pow(2, _matrix.PostfixLength);
+            int limit = (int)Math.Pow(2, _matrix.PostfixLength); // skaičius kiek klasių turi kodas, 2^(n-d)
             for (int i = 0; i < vector.Count; i++)
             {
-                var newVector = new BitArray(vector);
-                newVector[i] = true;
-                if (rekursions > 1)
-                    SetCosetLeaders(rekursions - 1, newVector);
-                else
+                if (!vector[i]) // jei vektoriaus einamasis bitas yra 0
                 {
-                    var syndrome = GetSyndrome(vector);
-                    if (!_cosetLeaders.Any(l => CompareBits(l.Syndrome,syndrome)))
-                        _cosetLeaders.Add(new MinimizedStandardTableEntry { CosetLeader = vector, Syndrome = syndrome, Weight = GetWeight(vector) });                  
+                    var newVector = new BitArray(vector);   //susikuriame vektoriaus kopiją
+                    newVector[i] = true;                    //ir joje tą patį einamąjį bitą pakeičiame į 1
+                    if (recursions > 1)
+                        SetCosetLeaders(recursions - 1, newVector);
+                    else
+                    {
+                        var syndrome = GetSyndrome(newVector); // randame naujo vektoriaus sindromą 
+                        if (!_cosetLeaders.Any(l => CompareBits(l.Syndrome, syndrome))) // jei tokio sindromo lentelėje dar nėra, pridedame jį kartu su klasės lyderio svoriu
+                            _cosetLeaders.Add(new MinimizedStandardTableEntry { Syndrome = syndrome, Weight = GetWeight(vector) });
+                    }
+                    if (_cosetLeaders.Count == limit)
+                        break;
                 }
-                if (_cosetLeaders.Count == limit)
-                    break;
             }
         }
-
+        /**
+        * palygina ar du bitų vektoriai yra lygūs
+        **/
         private bool CompareBits(BitArray vector1, BitArray vector2)
         {
             if (vector1.Count != vector2.Count)
@@ -176,12 +221,14 @@ namespace Code.Implementation
                     return false;
             return true;
         }
-
+        /**
+        * grąžina parametru perduoto bitų vektoriaus sindromą
+        **/
         private BitArray GetSyndrome(BitArray vector)
         {
             var result = new BitArray(_matrix.PostfixLength);
 
-            for(int i = 0; i < result.Count; i++)
+            for(int i = 0; i < result.Count; i++) // vektorius dauginamas su kontroline matrica
             {
                 bool bit = false;
                 for (int j = 0; j < _matrix.Dimension; j++)
@@ -193,7 +240,9 @@ namespace Code.Implementation
 
             return result;
         }
-
+        /**
+        * grąžina parametru perduoto bitų vektoriaus svorį
+        **/
         private int GetWeight(BitArray vector)
         {
             int result = 0;

@@ -8,10 +8,17 @@ using System.Threading.Tasks;
 
 namespace Code.Implementation
 {
+    /**
+     * realizuoją duomenų kanalo abstrakciją
+     **/
     public class Channel : IChannel
     {
         private Random _rand = new Random();
 
+        /**
+         * imituoja bitų masyvo siuntima kanalu su pasirinkta klaidos tikimybe,
+         * gražiną per kanalą praėjusį bitų masyvą
+         **/
         public BitArray Send(BitArray data, double failureRate)
         {
             if (failureRate > 1 || failureRate < 0)
@@ -24,6 +31,10 @@ namespace Code.Implementation
             return data;
         }
 
+        /**
+         * imituoja baitų masyvo siuntima kanalu su pasirinkta klaidos tikimybe,
+         * gražiną per kanalą praėjusį baitų masyvą
+         **/
         public byte[] Send(byte[] data, double failureRate)
         {
             return Send(new BitArray(data), failureRate).ToBytes();
