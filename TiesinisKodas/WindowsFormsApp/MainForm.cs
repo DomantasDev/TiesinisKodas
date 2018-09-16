@@ -42,7 +42,7 @@ namespace WindowsFormsApp
         private void _decodeImageButton_Click(object sender, EventArgs e)
         {
             if(!string.IsNullOrWhiteSpace(_fileName) && 
-                _generatingMatrix.Matrix != null &&
+                _generatingMatrix != null &&
                 double.TryParse(_failureRateTextBox.Text, out var failureRate))
             {
                 var bytes = File.ReadAllBytes(_fileName);
@@ -152,7 +152,10 @@ namespace WindowsFormsApp
             {
                 var encodedVector = _code.EncodeVector(vector);
                 _encodedTextBox.Text =  encodedVector.ToText();
-                _fromChannelTextBox.Text = _channel.Send(encodedVector, failureRate).ToText();
+                _fromChannelTextBox.Text = _channel.Send(encodedVector, failureRate, out var failures).ToText();
+                string failurePositions = null;
+                failures.ForEach(f => failurePositions += f + ", ");
+                _failureLabel.Text = $"failures: {failures.Count}. In positions: {failurePositions}";
             }
         }
 

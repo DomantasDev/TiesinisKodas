@@ -30,7 +30,25 @@ namespace Code.Implementation
 
             return data;
         }
+        /**
+         * imituoja bitų masyvo siuntima kanalu su pasirinkta klaidos tikimybe,
+         * gražina per kanalą praėjusį bitų masyvą.
+         * failures - masyvas pozicijų, kuriuose ivyko klaidos
+         **/
+        public BitArray Send(BitArray data, double failureRate, out List<int> failures)
+        {
+            if (failureRate > 1 || failureRate < 0)
+                throw new ArgumentException($"{nameof(failureRate)} must be a number between 0 and 100");
 
+            failures = new List<int>();
+            for (int i = 0; i < data.Count; i++)
+                if (_rand.NextDouble() < failureRate)
+                {
+                    data[i] = !data[i];
+                    failures.Add(i + 1);
+                }
+            return data;
+        }
         /**
          * imituoja baitų masyvo siuntima kanalu su pasirinkta klaidos tikimybe,
          * gražiną per kanalą praėjusį baitų masyvą

@@ -106,8 +106,11 @@ namespace Code.Implementation
             if (_controlMatrix == null) // jei kontrolinė matrica dar nesukurta, ją sukuriam
                 SetControlMatrix();
             if (!_cosetLeaders.Any())   // jei dar nėra sudarytą lentelė su klasiu sindromais ir svoriais, ją sudarome
+            {
+                _cosetLeaders.Add(new MinimizedStandardTableEntry {Syndrome = new BitArray(_matrix.PostfixLength), Weight = 0 });
                 for (int i = 1; i <= _matrix.CodeLength - 1; i++)
                     SetCosetLeaders(i, new BitArray(_matrix.CodeLength, false));
+            }
 
             var syndrome = GetSyndrome(vector);
             int currentWeight = _cosetLeaders.First(l => CompareBits(l.Syndrome, syndrome)).Weight;
@@ -202,7 +205,7 @@ namespace Code.Implementation
                     {
                         var syndrome = GetSyndrome(newVector); // randame naujo vektoriaus sindromą 
                         if (!_cosetLeaders.Any(l => CompareBits(l.Syndrome, syndrome))) // jei tokio sindromo lentelėje dar nėra, pridedame jį kartu su klasės lyderio svoriu
-                            _cosetLeaders.Add(new MinimizedStandardTableEntry { Syndrome = syndrome, Weight = GetWeight(vector) });
+                            _cosetLeaders.Add(new MinimizedStandardTableEntry { Syndrome = syndrome, Weight = GetWeight(newVector) });
                     }
                     if (_cosetLeaders.Count == limit)
                         break;

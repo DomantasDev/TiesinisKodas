@@ -56,6 +56,8 @@
             this.label6 = new System.Windows.Forms.Label();
             this._inputStringTextBox = new System.Windows.Forms.TextBox();
             this._imageTabPage = new System.Windows.Forms.TabPage();
+            this.label10 = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
             this._decodeImageButton = new System.Windows.Forms.Button();
             this._notCodedImage = new System.Windows.Forms.PictureBox();
             this._codedImage = new System.Windows.Forms.PictureBox();
@@ -65,8 +67,7 @@
             this.label5 = new System.Windows.Forms.Label();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this._setMatrixButton = new System.Windows.Forms.Button();
-            this.label9 = new System.Windows.Forms.Label();
-            this.label10 = new System.Windows.Forms.Label();
+            this._failureLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this._matrixGridView)).BeginInit();
             this._tabControl.SuspendLayout();
             this._vectorTabPage.SuspendLayout();
@@ -161,6 +162,7 @@
             // 
             // _vectorTabPage
             // 
+            this._vectorTabPage.Controls.Add(this._failureLabel);
             this._vectorTabPage.Controls.Add(this.label4);
             this._vectorTabPage.Controls.Add(this._decodedTextBox);
             this._vectorTabPage.Controls.Add(this._decodeVectorButton);
@@ -182,7 +184,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(129, 224);
+            this.label4.Location = new System.Drawing.Point(129, 249);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(87, 13);
             this.label4.TabIndex = 9;
@@ -190,7 +192,7 @@
             // 
             // _decodedTextBox
             // 
-            this._decodedTextBox.Location = new System.Drawing.Point(222, 221);
+            this._decodedTextBox.Location = new System.Drawing.Point(222, 246);
             this._decodedTextBox.Name = "_decodedTextBox";
             this._decodedTextBox.ReadOnly = true;
             this._decodedTextBox.Size = new System.Drawing.Size(468, 20);
@@ -198,7 +200,7 @@
             // 
             // _decodeVectorButton
             // 
-            this._decodeVectorButton.Location = new System.Drawing.Point(739, 166);
+            this._decodeVectorButton.Location = new System.Drawing.Point(739, 191);
             this._decodeVectorButton.Name = "_decodeVectorButton";
             this._decodeVectorButton.Size = new System.Drawing.Size(75, 23);
             this._decodeVectorButton.TabIndex = 7;
@@ -209,7 +211,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(111, 171);
+            this.label3.Location = new System.Drawing.Point(111, 196);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(105, 13);
             this.label3.TabIndex = 6;
@@ -217,7 +219,7 @@
             // 
             // _fromChannelTextBox
             // 
-            this._fromChannelTextBox.Location = new System.Drawing.Point(222, 168);
+            this._fromChannelTextBox.Location = new System.Drawing.Point(222, 193);
             this._fromChannelTextBox.Name = "_fromChannelTextBox";
             this._fromChannelTextBox.Size = new System.Drawing.Size(468, 20);
             this._fromChannelTextBox.TabIndex = 5;
@@ -357,6 +359,24 @@
             this._imageTabPage.Text = "Image";
             this._imageTabPage.UseVisualStyleBackColor = true;
             // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(845, 425);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(76, 13);
+            this.label10.TabIndex = 7;
+            this.label10.Text = "With encoding";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(487, 429);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(91, 13);
+            this.label9.TabIndex = 6;
+            this.label9.Text = "Without encoding";
+            // 
             // _decodeImageButton
             // 
             this._decodeImageButton.Location = new System.Drawing.Point(112, 425);
@@ -432,23 +452,13 @@
             this._setMatrixButton.Visible = false;
             this._setMatrixButton.Click += new System.EventHandler(this._setMatrixButton_Click);
             // 
-            // label9
+            // _failureLabel
             // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(487, 429);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(91, 13);
-            this.label9.TabIndex = 6;
-            this.label9.Text = "Without encoding";
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(845, 425);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(76, 13);
-            this.label10.TabIndex = 7;
-            this.label10.Text = "With encoding";
+            this._failureLabel.AutoSize = true;
+            this._failureLabel.Location = new System.Drawing.Point(224, 170);
+            this._failureLabel.Name = "_failureLabel";
+            this._failureLabel.Size = new System.Drawing.Size(0, 13);
+            this._failureLabel.TabIndex = 10;
             // 
             // MainForm
             // 
@@ -525,6 +535,7 @@
         private System.Windows.Forms.TextBox _notCodedStringTextBox;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label _failureLabel;
     }
 }
 
