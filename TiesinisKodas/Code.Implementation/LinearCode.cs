@@ -11,13 +11,13 @@ namespace Code.Implementation
     /**
     * Tiesinio kodo realizacija
     **/
-    public class StraightCode : ICode
+    public class LinearCode : ICode
     {
         private GeneratingMatrix _matrix;
         private BitArray[] _controlMatrix = null;
         private List<MinimizedStandardTableEntry> _cosetLeaders = new List<MinimizedStandardTableEntry>();
 
-        public StraightCode(GeneratingMatrix matrix)
+        public LinearCode(GeneratingMatrix matrix)
         {
             _matrix = matrix;
         }

@@ -41,9 +41,11 @@ namespace WindowsFormsApp
 
         private void _decodeImageButton_Click(object sender, EventArgs e)
         {
-            if(!string.IsNullOrWhiteSpace(_fileName) && 
-                _generatingMatrix != null &&
-                double.TryParse(_failureRateTextBox.Text, out var failureRate))
+            if(!string.IsNullOrWhiteSpace(_fileName) 
+                &&_generatingMatrix != null 
+                && double.TryParse(_failureRateTextBox.Text, out var failureRate)
+                && failureRate <= 1
+                && failureRate >= 0)
             {
                 var bytes = File.ReadAllBytes(_fileName);
                 var header = bytes.Take(34);
@@ -71,7 +73,7 @@ namespace WindowsFormsApp
                 for (int i = 0; i < _generatingMatrix.Dimension; i++)
                     for (int j = 0; j < _generatingMatrix.PostfixLength; j++)
                         _matrixGridView.Rows[i].Cells[j].Value = _generatingMatrix.Matrix[i][j].ToText();
-                _code = new StraightCode(_generatingMatrix);
+                _code = new LinearCode(_generatingMatrix);
             }
         }
 
@@ -98,7 +100,7 @@ namespace WindowsFormsApp
                         return;
             _setMatrixButton.Visible = false;
             _generatingMatrix.GenerateStandardFormMatrix(bits);
-            _code = new StraightCode(_generatingMatrix);
+            _code = new LinearCode(_generatingMatrix);
         }
 
         private bool TryGetMatrixSize(out int codeLength, out int dimension)
@@ -144,11 +146,13 @@ namespace WindowsFormsApp
         private void _encodeVectorButton_Click(object sender, EventArgs e)
         {
             string input = _vectorTextBox.Text;
-            if (!string.IsNullOrWhiteSpace(input) && 
-                double.TryParse(_failureRateTextBox.Text, out var failureRate) &&
-                _generatingMatrix.Matrix != null &&
-                input.Length == _generatingMatrix.Dimension && 
-                TryGetBits(input, out var vector))
+            if (!string.IsNullOrWhiteSpace(input)
+                && double.TryParse(_failureRateTextBox.Text, out var failureRate)
+                && failureRate <= 1
+                && failureRate >= 0
+                && _generatingMatrix.Matrix != null 
+                && input.Length == _generatingMatrix.Dimension 
+                && TryGetBits(input, out var vector))
             {
                 var encodedVector = _code.EncodeVector(vector);
                 _encodedTextBox.Text =  encodedVector.ToText();
@@ -162,16 +166,20 @@ namespace WindowsFormsApp
         private void _decodeButton_Click(object sender, EventArgs e)
         {
             string input = _fromChannelTextBox.Text;
-            if (!string.IsNullOrWhiteSpace(input) && input.Length == _generatingMatrix.CodeLength && TryGetBits(input, out var vector))
+            if (!string.IsNullOrWhiteSpace(input) 
+                && input.Length == _generatingMatrix.CodeLength 
+                && TryGetBits(input, out var vector))
                 _decodedTextBox.Text = _code.DecodeVector(vector).ToText();
         }
 
         private void _startStringButton_Click(object sender, EventArgs e)
         {
             string text = _inputStringTextBox.Text;
-            if (!string.IsNullOrWhiteSpace(text) && 
-                _generatingMatrix.Matrix != null && 
-                double.TryParse(_failureRateTextBox.Text, out var failureRate))
+            if (!string.IsNullOrWhiteSpace(text) 
+                && _generatingMatrix.Matrix != null 
+                && double.TryParse(_failureRateTextBox.Text, out var failureRate)
+                && failureRate <= 1
+                && failureRate >= 0)
             {
                 var input = Encoding.ASCII.GetBytes(text);
                 var encodedVector = _code.EncodeData(input);
